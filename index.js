@@ -17,7 +17,7 @@ function displayProducts(category, containerId) {
 
     container.innerHTML += `
       <div class="product-card reveal">
-        <img src="${product.img}" alt="${product.name}" onclick="openImage('${product.img}')">
+        <img src="${product.img}" alt="${product.name}" onclick="openImage('${product.img}')" onerror="this.src='images/placeholder.svg'">
         <div class="product-info">
           <h3>${product.name}</h3>
           ${storageHTML}
