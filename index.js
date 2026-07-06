@@ -91,8 +91,15 @@ function revealSections() {
 
 async function loadStoreProducts() {
   try {
-    const res = await fetch("/api/products");
-    storeProducts = await res.json();
+    const snapshot = await db.collection("products").get();
+    const products = {};
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const cat = data.category;
+      if (!products[cat]) products[cat] = [];
+      products[cat].push(data);
+    });
+    storeProducts = products;
   } catch {
     storeProducts = {};
   }

@@ -1,44 +1,51 @@
 let currentCategory = "iphones";
 let allProducts = {};
 
-function getToken() {
-  return localStorage.getItem("adminToken");
-}
-
-async function api(path, options = {}) {
-  const token = getToken();
-  const headers = { "Content-Type": "application/json", ...options.headers };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  const res = await fetch(path, { ...options, headers });
-  if (res.status === 401) { logout(); return null; }
-  return res.json();
-}
-
-async function login() {
-  const password = document.getElementById("loginPassword").value;
-  const res = await api("/api/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ password }),
-  });
-  if (res && res.token) {
-    localStorage.setItem("adminToken", res.token);
+auth.onAuthStateChanged((user) => {
+  if (user) {
     document.getElementById("loginPage").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
     loadProducts();
   } else {
-    document.getElementById("loginError").textContent = "Wrong password";
+    document.getElementById("loginPage").style.display = "flex";
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("seedSection").style.display = "none";
+  }
+});
+
+async function login() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    document.getElementById("loginError").textContent = "";
+  } catch (e) {
+    document.getElementById("loginError").textContent = e.message;
   }
 }
 
 function logout() {
-  localStorage.removeItem("adminToken");
-  document.getElementById("loginPage").style.display = "flex";
-  document.getElementById("dashboard").style.display = "none";
+  auth.signOut();
 }
 
 async function loadProducts() {
-  allProducts = await api("/api/products");
-  renderProducts();
+  try {
+    const snapshot = await db.collection("products").get();
+    allProducts = {};
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const cat = data.category;
+      if (!allProducts[cat]) allProducts[cat] = [];
+      data._docId = doc.id;
+      allProducts[cat].push(data);
+    });
+    renderProducts();
+    if (snapshot.empty) {
+      document.getElementById("seedSection").style.display = "block";
+    }
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 function renderProducts() {
@@ -60,8 +67,8 @@ function renderProducts() {
         <p>${p.storage ? p.storage.map(s => s.gb + ' - ₦' + s.price.toLocaleString()).join(', ') : '₦' + p.price.toLocaleString()}</p>
       </div>
       <div class="actions">
-        <button class="edit-btn" onclick="openEditModal('${currentCategory}', ${p.id})"><i class="fas fa-edit"></i> Edit</button>
-        <button class="delete-btn" onclick="deleteProduct('${currentCategory}', ${p.id})"><i class="fas fa-trash"></i> Delete</button>
+        <button class="edit-btn" onclick="openEditModal('${p._docId}')"><i class="fas fa-edit"></i> Edit</button>
+        <button class="delete-btn" onclick="deleteProduct('${p._docId}')"><i class="fas fa-trash"></i> Delete</button>
       </div>
     </div>
   `).join("")}</div>`;
@@ -88,8 +95,7 @@ function addStorageRow(gb = "", price = "") {
 
 function openAddModal() {
   document.getElementById("modalTitle").textContent = "Add Product";
-  document.getElementById("editId").value = "";
-  document.getElementById("editCategory").value = currentCategory;
+  document.getElementById("editDocId").value = "";
   document.getElementById("productName").value = "";
   document.getElementById("productImg").value = "";
   document.getElementById("productPrice").value = "";
@@ -103,13 +109,16 @@ function openAddModal() {
   document.getElementById("productModal").style.display = "flex";
 }
 
-function openEditModal(category, id) {
-  const product = allProducts[category].find((p) => p.id === id);
+function openEditModal(docId) {
+  let product;
+  for (const cat of Object.values(allProducts)) {
+    const found = cat.find((p) => p._docId === docId);
+    if (found) { product = found; break; }
+  }
   if (!product) return;
 
   document.getElementById("modalTitle").textContent = "Edit Product";
-  document.getElementById("editId").value = id;
-  document.getElementById("editCategory").value = category;
+  document.getElementById("editDocId").value = docId;
   document.getElementById("productName").value = product.name;
   document.getElementById("productImg").value = product.img;
   document.getElementById("productPrice").value = product.price || "";
@@ -130,8 +139,7 @@ function closeModal() {
 }
 
 async function saveProduct() {
-  const id = document.getElementById("editId").value;
-  const category = document.getElementById("editCategory").value || currentCategory;
+  const docId = document.getElementById("editDocId").value;
   const name = document.getElementById("productName").value.trim();
   const img = document.getElementById("productImg").value.trim();
   const price = document.getElementById("productPrice").value;
@@ -154,40 +162,35 @@ async function saveProduct() {
     }
   });
 
-  const body = { name, img };
-  if (hasStorage) {
-    body.storage = storage;
-  } else if (price) {
-    body.price = parseInt(price);
-  }
-
-  if (id) {
-    await api(`/api/products/${category}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(body),
-    });
+  if (docId) {
+    const updates = { name, img };
+    if (hasStorage) {
+      updates.storage = storage;
+      updates.price = firebase.firestore.FieldValue.delete();
+    } else if (price) {
+      updates.price = parseInt(price);
+      updates.storage = firebase.firestore.FieldValue.delete();
+    }
+    await db.collection("products").doc(docId).update(updates);
   } else {
-    await api(`/api/products/${category}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    });
+    const maxId = (allProducts[currentCategory] || []).reduce((max, p) => Math.max(max, p.id || 0), 0);
+    const body = { id: maxId + 1, name, img, category: currentCategory };
+    if (hasStorage) {
+      body.storage = storage;
+    } else if (price) {
+      body.price = parseInt(price);
+    }
+    await db.collection("products").add(body);
   }
 
   closeModal();
   loadProducts();
 }
 
-async function deleteProduct(category, id) {
+async function deleteProduct(docId) {
   if (!confirm("Delete this product?")) return;
-  await api(`/api/products/${category}/${id}`, { method: "DELETE" });
+  await db.collection("products").doc(docId).delete();
   loadProducts();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const token = getToken();
-  if (token) {
-    document.getElementById("loginPage").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-    loadProducts();
-  }
-});
+

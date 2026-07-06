@@ -1,4 +1,19 @@
-{
+const firebase = require("firebase/compat/app");
+require("firebase/compat/firestore");
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDAqUbYPX5wVpRn1Tgs4uquB_qhMAUz8q0",
+  authDomain: "logic-gadget-store.firebaseapp.com",
+  projectId: "logic-gadget-store",
+  storageBucket: "logic-gadget-store.firebasestorage.app",
+  messagingSenderId: "914698370044",
+  appId: "1:914698370044:web:a5bc33e15a76094a68d079"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const seedData = {
   "iphones": [
     { "id": 1, "name": "iPhone XR", "img": "images/iphonexr.jpg", "storage": [{ "gb": "64GB", "price": 190000 }, { "gb": "128GB", "price": 220000 }] },
     { "id": 2, "name": "iPhone XS", "img": "images/iphonexs.jpg", "storage": [{ "gb": "64GB", "price": 190000 }, { "gb": "128GB", "price": 250000 }] },
@@ -71,4 +86,26 @@
     { "id": 305, "name": "Wireless Power Bank", "img": "images/pb5.jpg", "storage": [{ "gb": "10000mAh", "price": 15000 }, { "gb": "20000mAh", "price": 25000 }] },
     { "id": 306, "name": "Itel Power Tank", "img": "images/pb6.jpg", "storage": [{ "gb": "500Wh", "price": 250000 }, { "gb": "1000Wh", "price": 450000 }] }
   ]
+};
+
+async function seed() {
+  const batch = db.batch();
+  let count = 0;
+
+  for (const [category, products] of Object.entries(seedData)) {
+    for (const product of products) {
+      const ref = db.collection("products").doc();
+      batch.set(ref, { ...product, category });
+      count++;
+    }
+  }
+
+  await batch.commit();
+  console.log(`Seeded ${count} products successfully!`);
+  process.exit(0);
 }
+
+seed().catch((err) => {
+  console.error("Seed failed:", err);
+  process.exit(1);
+});
