@@ -168,13 +168,41 @@ function previewImage(event) {
   }
 }
 
+function compressImage(file, maxW) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      let w = img.width, h = img.height;
+      if (w > maxW) { h *= maxW / w; w = maxW; }
+      if (h > maxW) { w *= maxW / h; h = maxW; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      canvas.toBlob((blob) => resolve(new File([blob], file.name, { type: "image/jpeg" })), "image/jpeg", 0.8);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 async function uploadToCloudinary(file) {
+  const compressed = await compressImage(file, 800);
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", compressed);
   formData.append("upload_preset", "logic_gadget_hub");
-  const res = await fetch("https://api.cloudinary.com/v1_1/de7fyrtxe/image/upload", { method: "POST", body: formData });
-  const data = await res.json();
-  return data.secure_url;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+  try {
+    const res = await fetch("https://api.cloudinary.com/v1_1/de7fyrtxe/image/upload", {
+      method: "POST", body: formData, signal: controller.signal
+    });
+    clearTimeout(timeout);
+    const data = await res.json();
+    if (!data.secure_url) throw new Error(data.error?.message || "Upload failed");
+    return data.secure_url;
+  } catch (e) {
+    clearTimeout(timeout);
+    throw e;
+  }
 }
 
 function closeModal() {
@@ -200,7 +228,8 @@ async function saveProduct() {
       document.querySelector(".save-btn").textContent = "Uploading image...";
       img = await uploadToCloudinary(file);
     } catch {
-      alert("Image upload failed. Please try again.");
+      document.querySelector(".save-btn").textContent = "Save Product";
+      alert("Image upload failed. Check your Cloudinary preset or try a smaller image.");
       return;
     }
   }
