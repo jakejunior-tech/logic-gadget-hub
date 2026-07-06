@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Gadget Store</title>
+<link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<div id="loginPage">
+  <div class="login-box">
+    <h2><i class="fas fa-shield-alt"></i> Admin Login</h2>
+    <input type="password" id="loginPassword" placeholder="Enter admin password">
+    <button onclick="login()">Login</button>
+    <p id="loginError"></p>
+  </div>
+</div>
+
+<div id="dashboard" style="display:none">
+  <header class="admin-header">
+    <h1><i class="fas fa-store"></i> Gadget Store Admin</h1>
+    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </header>
+
+  <div class="admin-body">
+    <div class="category-tabs">
+      <button class="tab active" data-cat="iphones" onclick="switchTab('iphones')">iPhones</button>
+      <button class="tab" data-cat="cases" onclick="switchTab('cases')">Cases</button>
+      <button class="tab" data-cat="accessories" onclick="switchTab('accessories')">Accessories</button>
+      <button class="tab" data-cat="powerbanks" onclick="switchTab('powerbanks')">Power Banks</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> Add Product</button>
+      <input type="text" id="adminSearch" placeholder="Search products..." oninput="renderProducts()">
+    </div>
+
+    <div id="productsContainer"></div>
+  </div>
+</div>
+
+<div id="productModal" class="modal" style="display:none">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2 id="modalTitle">Add Product</h2>
+    <input type="hidden" id="editId">
+    <input type="hidden" id="editCategory">
+
+    <label>Product Name</label>
+    <input type="text" id="productName" placeholder="e.g. iPhone 15 Pro">
+
+    <label>Image Path</label>
+    <input type="text" id="productImg" placeholder="e.g. images/iphone15pro.jpg">
+
+    <label>Price (fixed price products like cases/accessories)</label>
+    <input type="number" id="productPrice" placeholder="Leave blank if using storage variants">
+
+    <label>Storage Variants (for iPhones & Power Banks)</label>
+    <div id="storageContainer">
+      <div class="storage-row">
+        <input type="text" class="storage-gb" placeholder="e.g. 128GB">
+        <input type="number" class="storage-price" placeholder="Price">
+        <button class="remove-storage" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <button class="add-storage-btn" onclick="addStorageRow()"><i class="fas fa-plus"></i> Add Variant</button>
+
+    <button class="save-btn" onclick="saveProduct()">Save Product</button>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
