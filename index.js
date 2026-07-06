@@ -1,0 +1,224 @@
+const whatsappNumber = "YOUR_WHATSAPP_NUMBER";
+
+const products = {
+  iphones: [
+    { id: 1, name: "iPhone XR", img: "images/iphonexr.jpg", storage: [{ gb: "64GB", price: 190000 }, { gb: "128GB", price: 220000 }] },
+    { id: 2, name: "iPhone XS", img: "images/iphonexs.jpg", storage: [{ gb: "64GB", price: 190000 }, { gb: "128GB", price: 250000 }] },
+    { id: 3, name: "iPhone XS Max", img: "images/iphonexsmax.jpg", storage: [{ gb: "64GB", price: 250000 }, { gb: "128GB", price: 280000 }, { gb: "256GB", price: 310000 }] },
+    { id: 4, name: "iPhone 11", img: "images/iphone11.jpg", storage: [{ gb: "64GB", price: 250000 }, { gb: "128GB", price: 290000 }] },
+    { id: 5, name: "iPhone 11 Pro", img: "images/iphone11pro.jpeg", storage: [{ gb: "64GB", price: 295000 }, { gb: "256GB", price: 350000 }] },
+    { id: 6, name: "iPhone 11 Pro Max", img: "images/iphone11promax.jpg", storage: [{ gb: "64GB", price: 350000 }, { gb: "256GB", price: 380000 }] },
+    { id: 7, name: "iPhone 12", img: "images/iphone12.jpg", storage: [{ gb: "64GB", price: 265000 }, { gb: "128GB", price: 330000 }] },
+    { id: 8, name: "iPhone 12 Pro", img: "images/iphone12pro.jpg", storage: [{ gb: "128GB", price: 390000 }, { gb: "256GB", price: 410000 }] },
+    { id: 9, name: "iPhone 12 Pro Max", img: "images/iphone12promax.jpg", storage: [{ gb: "128GB", price: 650000 }, { gb: "256GB", price: 720000 }] },
+    { id: 10, name: "iPhone 13", img: "images/iphone13.jpg", storage: [{ gb: "128GB", price: 390000 }, { gb: "256GB", price: 450000 }] },
+    { id: 11, name: "iPhone 13 Pro", img: "images/iphone13pro.jpg", storage: [{ gb: "128GB", price: 510000 }, { gb: "256GB", price: 550000 }] },
+    { id: 12, name: "iPhone 13 Pro Max", img: "images/iphone13promax.jpg", storage: [{ gb: "128GB", price: 590000 }, { gb: "256GB", price: 630000 }] },
+    { id: 13, name: "iPhone 14", img: "images/iphone14.jpg", storage: [{ gb: "128GB", price: 470000 }, { gb: "256GB", price: 530000 }] },
+    { id: 14, name: "iPhone 14 Plus", img: "images/iphone14plus.jpg", storage: [{ gb: "128GB", price: 550000 }] },
+    { id: 15, name: "iPhone 14 Pro", img: "images/iphone14pro.jpg", storage: [{ gb: "128GB", price: 650000 }, { gb: "256GB", price: 700000 }] },
+    { id: 16, name: "iPhone 14 Pro Max", img: "images/iphone14promax.jpg", storage: [{ gb: "128GB", price: 750000 }, { gb: "256GB", price: 850000 }] },
+    { id: 17, name: "iPhone 15", img: "images/iphone15.jpg", storage: [{ gb: "128GB", price: 650000 }, { gb: "256GB", price: 700000 }] },
+    { id: 18, name: "iPhone 15 Pro", img: "images/iphone15pro.jpg", storage: [{ gb: "256GB", price: 800000 }, { gb: "512GB", price: 850000 }] },
+    { id: 19, name: "iPhone 15 Pro Max", img: "images/iphone15promax.jpg", storage: [{ gb: "256GB", price: 890000 }, { gb: "512GB", price: 930000 }] },
+    { id: 20, name: "iPhone 16", img: "images/iphone16.jpg", storage: [{ gb: "128GB", price: 900000 }, { gb: "256GB", price: 950000 }] },
+    { id: 21, name: "iPhone 16 Plus", img: "images/iphone16plus.jpg", storage: [{ gb: "256GB", price: 950000 }, { gb: "512GB", price: 990000 }] },
+    { id: 22, name: "iPhone 16 Pro", img: "images/iphone16pro.jpg", storage: [{ gb: "256GB", price: 1300000 }, { gb: "512GB", price: 1700000 }] },
+    { id: 23, name: "iPhone 16 Pro Max", img: "images/iphone16promax.jpg", storage: [{ gb: "256GB", price: 1500000 }, { gb: "512GB", price: 1900000 }] },
+    { id: 24, name: "iPhone 17", img: "images/iphone17.jpg", storage: [{ gb: "256GB", price: 2000000 }, { gb: "512GB", price: 2100000 }] },
+    { id: 25, name: "iPhone 17 Air", img: "images/iphone17air.jpg", storage: [{ gb: "256GB", price: 2000000 }, { gb: "512GB", price: 2200000 }] },
+    { id: 26, name: "iPhone 17 Pro", img: "images/iphone17pro.jpg", storage: [{ gb: "256GB", price: 2100000 }, { gb: "512GB", price: 2300000 }] },
+    { id: 27, name: "iPhone 17 Pro Max", img: "images/iphone17promax.jpg", storage: [{ gb: "512GB", price: 2500000 }, { gb: "1TB", price: 2700000 }] },
+  ],
+
+  cases: [
+    { id: 101, name: "iPhone Case", price: 2000, img: "images/case1.jpg" },
+    { id: 102, name: "iPhone Case", price: 2000, img: "images/case2.jpg" },
+    { id: 103, name: "iPhone Case", price: 2000, img: "images/case3.jpg" },
+    { id: 104, name: "iPhone Case", price: 2000, img: "images/case4.jpg" },
+    { id: 105, name: "iPhone Case", price: 2000, img: "images/case5.jpg" },
+    { id: 106, name: "iPhone Case", price: 2000, img: "images/case6.jpg" },
+    { id: 107, name: "Silicone double side Suction", price: 2000, img: "images/case7.jpg" },
+    { id: 108, name: "iPhone Case", price: 2000, img: "images/case11.jpg" },
+    { id: 109, name: "iPhone Case", price: 2000, img: "images/case12.jpg" },
+    { id: 110, name: "iPhone Case", price: 2000, img: "images/case13.jpg" },
+    { id: 111, name: "Case", price: 2000, img: "images/case14.jpg" },
+    { id: 112, name: "Luxury Case", price: 5000, img: "images/case15.jpg" },
+  ],
+
+  accessories: [
+    { id: 201, name: "JBL Speaker", price: 780000, img: "images/acc1.jpg" },
+    { id: 202, name: "ONYX Speaker", price: 780000, img: "images/acc2.jpg" },
+    { id: 203, name: "Tripod Stand", price: 18000, img: "images/acc3.jpg" },
+    { id: 204, name: "OSMO POCKET 3", price: 950000, img: "images/acc4.jpg" },
+    { id: 205, name: "Tripod Stand", price: 22000, img: "images/acc5.jpg" },
+    { id: 206, name: "Wireless Controller Manual", price: 650000, img: "images/acc6.jpg" },
+    { id: 207, name: "ZEALOT-P12", price: 65000, img: "images/acc7.jpg" },
+    { id: 208, name: "ZEALOT-P8", price: 45000, img: "images/acc8.jpg" },
+    { id: 209, name: "ZEALOT S-67", price: 60000, img: "images/acc9.jpg" },
+    { id: 210, name: "ZEALOT S78", price: 65000, img: "images/acc10.jpg" },
+    { id: 211, name: "ZEALOT S79", price: 65000, img: "images/acc11.jpg" },
+    { id: 212, name: "ZEALOT SUPER BASS", price: 65000, img: "images/acc12.jpg" },
+    { id: 213, name: "ZEALOT S97", price: 85000, img: "images/acc13.jpg" },
+    { id: 214, name: "PS", price: 30000, img: "images/acc14.jpg" },
+    { id: 215, name: "GAMING SET", price: 1000000, img: "images/acc15.jpg" },
+    { id: 216, name: "PS5", price: 1000000, img: "images/acc16.jpg" },
+    { id: 217, name: "MICROPHONE", price: 10000, img: "images/acc17.jpg" },
+    { id: 218, name: "EARBUD", price: 10000, img: "images/acc18.jpg" },
+    { id: 219, name: "Oraimo Earbuds", price: 9000, img: "images/acc19.jpg" },
+  ],
+
+  powerbanks: [
+    { id: 301, name: "Oraimo Power Bank", img: "images/oraimo.jpg", storage: [{ gb: "20000mAh", price: 18000 }, { gb: "30000mAh", price: 25000 }, { gb: "40000mAh", price: 35000 }, { gb: "55000mAh", price: 50000 }] },
+    { id: 302, name: "Itel Power Bank", img: "images/itel.jpg", storage: [{ gb: "20000mAh", price: 18000 }, { gb: "27000mAh", price: 25000 }, { gb: "30000mAh", price: 27000 }, { gb: "60000mAh", price: 75000 }] },
+    { id: 303, name: "New Age Power Bank", img: "images/newage.jpg", storage: [{ gb: "22500mAh", price: 16000 }, { gb: "34000mAh", price: 24000 }, { gb: "55000mAh", price: 57000 }, { gb: "66000mAh", price: 60000 }] },
+    { id: 304, name: "Linco Power Bank", img: "images/linco.jpg", storage: [{ gb: "20000mAh", price: 13000 }, { gb: "30000mAh", price: 15000 }, { gb: "50000mAh", price: 35000 }, { gb: "60000mAh", price: 48000 }] },
+    { id: 305, name: "Wireless Power Bank", img: "images/pb5.jpg", storage: [{ gb: "10000mAh", price: 15000 }, { gb: "20000mAh", price: 25000 }] },
+    { id: 306, name: "Itel Power Tank", img: "images/pb6.jpg", storage: [{ gb: "500Wh", price: 250000 }, { gb: "1000Wh", price: 450000 }] },
+  ],
+};
+
+function displayProducts(category, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "";
+
+  products[category].forEach((product) => {
+    let storageHTML = "";
+    if (product.storage) {
+      storageHTML = `<select id="storage-${product.id}" class="storage-select">${product.storage.map((item, index) => `<option value="${index}">${item.gb} - ₦${item.price.toLocaleString()}</option>`).join("")}</select>`;
+    }
+
+    const displayPrice = product.price || product.storage[0].price;
+
+    container.innerHTML += `
+      <div class="product-card reveal">
+        <img src="${product.img}" alt="${product.name}" onclick="openImage('${product.img}')">
+        <div class="product-info">
+          <h3>${product.name}</h3>
+          ${storageHTML}
+          <p class="price">₦${displayPrice.toLocaleString()}</p>
+          <button onclick="order(${product.id},'${category}')">Order on WhatsApp</button>
+        </div>
+      </div>`;
+  });
+
+  revealSections();
+}
+
+function order(id, category) {
+  const product = products[category].find((item) => item.id === id);
+  if (!product) return;
+
+  let productName = product.name;
+  let productPrice = product.price;
+
+  if (product.storage) {
+    const select = document.getElementById(`storage-${product.id}`);
+    const chosen = product.storage[select.value];
+    productName = `${product.name} (${chosen.gb})`;
+    productPrice = chosen.price;
+  }
+
+  const message = `Hello, I want to order:\n\n${productName}\nPrice: ₦${productPrice.toLocaleString()}\n\nPlease send payment details.`;
+  window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
+}
+
+function searchProducts(value) {
+  const cards = document.querySelectorAll(".product-card");
+  cards.forEach((card) => {
+    card.style.display = card.innerText.toLowerCase().includes(value.toLowerCase()) ? "block" : "none";
+  });
+}
+
+function filterCategory(category) {
+  const sections = document.querySelectorAll(".products");
+  if (category === "all") {
+    sections.forEach((s) => s.style.display = "block");
+    return;
+  }
+  sections.forEach((s) => s.style.display = "none");
+  const selected = document.getElementById(category);
+  if (selected) selected.style.display = "block";
+}
+
+function openImage(src) {
+  document.getElementById("modalImage").src = src;
+  document.getElementById("imageModal").classList.add("active");
+}
+
+function closeImage() {
+  document.getElementById("imageModal").classList.remove("active");
+}
+
+function toggleMenu() {
+  document.getElementById("navbar").classList.toggle("active");
+  document.getElementById("menuToggle").classList.toggle("active");
+}
+
+function revealSections() {
+  const reveals = document.querySelectorAll(".reveal");
+  reveals.forEach((item) => {
+    if (item.getBoundingClientRect().top < window.innerHeight - 120) {
+      item.classList.add("active");
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  displayProducts("iphones", "iphonesGrid");
+  displayProducts("cases", "casesGrid");
+  displayProducts("accessories", "accessoriesGrid");
+  displayProducts("powerbanks", "powerbanksGrid");
+
+  const shopBtn = document.getElementById("shopNowBtn");
+  if (shopBtn) {
+    shopBtn.addEventListener("click", () => {
+      document.getElementById("iphones").scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => searchProducts(e.target.value));
+  }
+
+  const categoryFilter = document.getElementById("categoryFilter");
+  if (categoryFilter) {
+    categoryFilter.addEventListener("change", (e) => filterCategory(e.target.value));
+  }
+
+  const menuToggle = document.getElementById("menuToggle");
+  if (menuToggle) menuToggle.addEventListener("click", toggleMenu);
+
+  const closeBtn = document.getElementById("closeImageModal");
+  if (closeBtn) closeBtn.addEventListener("click", closeImage);
+
+  const modal = document.getElementById("imageModal");
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target.id === "imageModal") closeImage();
+    });
+  }
+
+  const topBtn = document.getElementById("topBtn");
+  if (topBtn) {
+    topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  }
+
+  revealSections();
+});
+
+window.addEventListener("scroll", () => {
+  revealSections();
+  const topBtn = document.getElementById("topBtn");
+  if (topBtn) {
+    topBtn.style.display = window.scrollY > 400 ? "block" : "none";
+  }
+});
+
+window.addEventListener("load", () => {
+  const preloader = document.getElementById("preloader");
+  preloader.style.opacity = "0";
+  setTimeout(() => { preloader.style.display = "none"; }, 800);
+});
