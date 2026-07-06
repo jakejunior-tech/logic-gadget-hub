@@ -210,72 +210,77 @@ function closeModal() {
 }
 
 async function saveProduct() {
-  const docId = document.getElementById("editDocId").value;
-  const name = document.getElementById("productName").value.trim();
-  const fileInput = document.getElementById("productImgFile");
-  const file = fileInput.files[0];
-  const hiddenImg = document.getElementById("productImg").value.trim();
-  const price = document.getElementById("productPrice").value;
+  const btn = document.querySelector(".save-btn");
+  try {
+    const docId = document.getElementById("editDocId").value;
+    const name = document.getElementById("productName").value.trim();
+    const fileInput = document.getElementById("productImgFile");
+    const file = fileInput.files[0];
+    const hiddenImg = document.getElementById("productImg").value.trim();
+    const price = document.getElementById("productPrice").value;
 
-  if (!name) {
-    alert("Product name is required");
-    return;
-  }
-
-  let img = hiddenImg;
-  if (file) {
-    try {
-      document.querySelector(".save-btn").textContent = "Uploading image...";
-      img = await uploadToCloudinary(file);
-    } catch {
-      document.querySelector(".save-btn").textContent = "Save Product";
-      alert("Image upload failed. Check your Cloudinary preset or try a smaller image.");
+    if (!name) {
+      alert("Product name is required");
       return;
     }
-  }
 
-  if (!img) {
-    alert("Please select an image");
-    return;
-  }
-
-  const storageRows = document.querySelectorAll(".storage-row");
-  const storage = [];
-  let hasStorage = false;
-
-  storageRows.forEach((row) => {
-    const gb = row.querySelector(".storage-gb").value.trim();
-    const p = row.querySelector(".storage-price").value;
-    if (gb && p) {
-      storage.push({ gb, price: parseInt(p) });
-      hasStorage = true;
+    let img = hiddenImg;
+    if (file) {
+      try {
+        btn.textContent = "Uploading image...";
+        img = await uploadToCloudinary(file);
+      } catch {
+        alert("Image upload failed. Check your Cloudinary preset or try a smaller image.");
+        return;
+      }
     }
-  });
 
-  if (docId) {
-    const updates = { name, img };
-    if (hasStorage) {
-      updates.storage = storage;
-      updates.price = firebase.firestore.FieldValue.delete();
-    } else if (price) {
-      updates.price = parseInt(price);
-      updates.storage = firebase.firestore.FieldValue.delete();
+    if (!img) {
+      alert("Please select an image");
+      return;
     }
-    await db.collection("products").doc(docId).update(updates);
-  } else {
-    const maxId = (allProducts[currentCategory] || []).reduce((max, p) => Math.max(max, p.id || 0), 0);
-    const body = { id: maxId + 1, name, img, category: currentCategory };
-    if (hasStorage) {
-      body.storage = storage;
-    } else if (price) {
-      body.price = parseInt(price);
+
+    const storageRows = document.querySelectorAll(".storage-row");
+    const storage = [];
+    let hasStorage = false;
+
+    storageRows.forEach((row) => {
+      const gb = row.querySelector(".storage-gb").value.trim();
+      const p = row.querySelector(".storage-price").value;
+      if (gb && p) {
+        storage.push({ gb, price: parseInt(p) });
+        hasStorage = true;
+      }
+    });
+
+    if (docId) {
+      const updates = { name, img };
+      if (hasStorage) {
+        updates.storage = storage;
+        updates.price = firebase.firestore.FieldValue.delete();
+      } else if (price) {
+        updates.price = parseInt(price);
+        updates.storage = firebase.firestore.FieldValue.delete();
+      }
+      await db.collection("products").doc(docId).update(updates);
+    } else {
+      const maxId = (allProducts[currentCategory] || []).reduce((max, p) => Math.max(max, p.id || 0), 0);
+      const body = { id: maxId + 1, name, img, category: currentCategory };
+      if (hasStorage) {
+        body.storage = storage;
+      } else if (price) {
+        body.price = parseInt(price);
+      }
+      await db.collection("products").add(body);
     }
-    await db.collection("products").add(body);
+
+    closeModal();
+    loadProducts();
+  } catch (e) {
+    alert("Error saving product: " + e.message);
+  } finally {
+    btn.textContent = "Save Product";
   }
-
-  document.querySelector(".save-btn").textContent = "Save Product";
-  closeModal();
-  loadProducts();
 }
 
 async function deleteProduct(docId) {
