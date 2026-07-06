@@ -376,3 +376,20 @@ body {
     flex: 1;
   }
 }
+
+@media(max-width: 480px) {
+  .login-box {
+    padding: 25px 20px;
+    width: 92%;
+  }
+
+  .login-box h2 {
+    font-size: 1.1rem;
+  }
+
+  .login-box input,
+  .login-box button {
+    padding: 12px;
+    font-size: .95rem;
+  }
+}
