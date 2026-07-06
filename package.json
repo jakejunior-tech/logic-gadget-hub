@@ -1,8 +1,6 @@
 {
   "name": "gadget-store",
   "version": "1.0.0",
-  "description": "Premium Gadgets Store",
-  "dependencies": {
-    "firebase": "^10.14.1"
-  }
+  "description": "Premium Gadgets Store"
+}
 }
