@@ -111,6 +111,8 @@ function openAddModal() {
   document.getElementById("editDocId").value = "";
   document.getElementById("productName").value = "";
   document.getElementById("productImg").value = "";
+  document.getElementById("productImgFile").value = "";
+  document.getElementById("imagePreview").style.display = "none";
   document.getElementById("productPrice").value = "";
   document.getElementById("storageContainer").innerHTML = `
     <div class="storage-row">
@@ -134,6 +136,13 @@ function openEditModal(docId) {
   document.getElementById("editDocId").value = docId;
   document.getElementById("productName").value = product.name;
   document.getElementById("productImg").value = product.img;
+  document.getElementById("productImgFile").value = "";
+  if (product.img) {
+    document.getElementById("imagePreview").src = product.img;
+    document.getElementById("imagePreview").style.display = "block";
+  } else {
+    document.getElementById("imagePreview").style.display = "none";
+  }
   document.getElementById("productPrice").value = product.price || "";
 
   const sc = document.getElementById("storageContainer");
@@ -147,6 +156,27 @@ function openEditModal(docId) {
   document.getElementById("productModal").style.display = "flex";
 }
 
+function previewImage(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById("imagePreview").src = e.target.result;
+      document.getElementById("imagePreview").style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "logic_gadget_hub");
+  const res = await fetch("https://api.cloudinary.com/v1_1/de7fyrtxe/image/upload", { method: "POST", body: formData });
+  const data = await res.json();
+  return data.secure_url;
+}
+
 function closeModal() {
   document.getElementById("productModal").style.display = "none";
 }
@@ -154,11 +184,29 @@ function closeModal() {
 async function saveProduct() {
   const docId = document.getElementById("editDocId").value;
   const name = document.getElementById("productName").value.trim();
-  const img = document.getElementById("productImg").value.trim();
+  const fileInput = document.getElementById("productImgFile");
+  const file = fileInput.files[0];
+  const hiddenImg = document.getElementById("productImg").value.trim();
   const price = document.getElementById("productPrice").value;
 
-  if (!name || !img) {
-    alert("Product name and image are required");
+  if (!name) {
+    alert("Product name is required");
+    return;
+  }
+
+  let img = hiddenImg;
+  if (file) {
+    try {
+      document.querySelector(".save-btn").textContent = "Uploading image...";
+      img = await uploadToCloudinary(file);
+    } catch {
+      alert("Image upload failed. Please try again.");
+      return;
+    }
+  }
+
+  if (!img) {
+    alert("Please select an image");
     return;
   }
 
@@ -196,6 +244,7 @@ async function saveProduct() {
     await db.collection("products").add(body);
   }
 
+  document.querySelector(".save-btn").textContent = "Save Product";
   closeModal();
   loadProducts();
 }

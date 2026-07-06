@@ -377,6 +377,21 @@ body {
   }
 }
 
+#productImgFile {
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  background: #1f2937;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+#imagePreview {
+  margin-top: 8px;
+  border-radius: 8px;
+}
+
 @media(max-width: 480px) {
   .login-box {
     padding: 25px 20px;
