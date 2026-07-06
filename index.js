@@ -93,6 +93,15 @@ function toggleMenu() {
   document.getElementById("menuToggle").classList.toggle("active");
 }
 
+document.addEventListener("click", (e) => {
+  const nav = document.getElementById("navbar");
+  const toggle = document.getElementById("menuToggle");
+  if (nav.classList.contains("active") && !nav.contains(e.target) && !toggle.contains(e.target)) {
+    nav.classList.remove("active");
+    toggle.classList.remove("active");
+  }
+});
+
 function revealSections() {
   const reveals = document.querySelectorAll(".reveal");
   reveals.forEach((item) => {
